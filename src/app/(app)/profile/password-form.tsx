@@ -1,27 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import LoadingDots from "@/components/ui/loading-dots";
 import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import toast from "react-hot-toast";
+
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import toast from "react-hot-toast";
 
-const profileFormSchema = z.object({
-  email: z.string().min(2).max(250).email('This is not a valid email'),
-  name: z.string().min(4).max(250),
-  contact: z.string().min(10,'Minimum 10 digits').max(10, 'Max 10 digits')
-})
+const pswdFormSchema = z.object({
+  password: z.string().min(6, 'Must be min 6 characters').max(50)
+  .regex(/(?=.*[a-z])/,'Atleast one lower case')
+  .regex(/(?=.*[A-Z])/,'Atleast one upper case')
+  .regex(/(?=.*\d)/, 'Atleast one digit')
+  .refine(s => !s.includes(' '), 'No Spaces!')
+  ,
+  cnfm_password: z.string(),
+}).superRefine(({ cnfm_password, password }, ctx) => {
+  if (cnfm_password !== password) {
+    ctx.addIssue({
+      code: "custom",
+      message: "The passwords did not match",
+      path: ['cnfm_password']
+    });
+  }
+});
 
 type propsType = {
   setLoading : React.Dispatch<React.SetStateAction<any>>,
@@ -29,41 +42,37 @@ type propsType = {
   profileData : UserProfile
 }
 
-export default function ProfileUpdateForm({setLoading, loading, profileData} : propsType) {
+export default function PasswordUpdateForm({setLoading, loading, profileData} : propsType) {
 
-  const profileForm = useForm<z.infer<typeof profileFormSchema>>({
-    resolver: zodResolver(profileFormSchema),
+  const pswdForm = useForm<z.infer<typeof pswdFormSchema>>({
+    resolver: zodResolver(pswdFormSchema),
     defaultValues : {
-      name : profileData.name,
-      contact : profileData.contact,
-      email : profileData.email
+      password : '',
+      cnfm_password : ''
     }
   })
 
-  const reset = profileForm.reset;
+  const reset = pswdForm.reset;
 
-  useEffect(()=>{
-    reset({
-      name : profileData.name,
-      email : profileData.email,
-      contact : profileData.contact
-    })
-  },[profileData, reset])
-
-  function onSubmit(values: z.infer<typeof profileFormSchema>) {
+  function onSubmit(values: z.infer<typeof pswdFormSchema>) {
     setLoading(true);
-    fetch('/api/user/updateUserProfile', {
+    const reqJson = {
+      "password" : values.password,
+      "email" : profileData.email
+    }
+    fetch('/api/user/userChangePswd', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(values)
+      body: JSON.stringify(reqJson)
     })
     .then( res => {
       setLoading(false);
       if(res.ok){
-        toast.success("Update Sucessfully!");
+        toast.success("Password updated Sucessfully!");
+        reset();
       } else {
         toast.error("Update Failed!");
       }
@@ -72,16 +81,17 @@ export default function ProfileUpdateForm({setLoading, loading, profileData} : p
 
   return (
     <>
-      <Form {...profileForm}>
-        <form onSubmit={profileForm.handleSubmit(onSubmit)} className="flex flex-col space-y-4 bg-gray-50 px-4 py-8 sm:px-16">
+      <Form {...pswdForm}>
+        <form onSubmit={pswdForm.handleSubmit(onSubmit)} className="flex flex-col space-y-4 bg-gray-50 px-4 pt-4 pb-8 sm:px-16">
           <FormField
-            control={profileForm.control}
-            name="email"
+            control={pswdForm.control}
+            name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
+                    placeholder="New Password"
+                    type="password"
                     disabled={loading}
                     {...field}
                   />
@@ -90,28 +100,14 @@ export default function ProfileUpdateForm({setLoading, loading, profileData} : p
               </FormItem>)}
           />
           <FormField
-            control={profileForm.control}
-            name="name"
+            control={pswdForm.control}
+            name="cnfm_password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
                 <FormControl>
                   <Input
-                    disabled={loading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>)}
-          />
-          <FormField
-            control={profileForm.control}
-            name="contact"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Contact</FormLabel>
-                <FormControl>
-                  <Input
+                    placeholder="Confirm New Password"
+                    type="password"
                     disabled={loading}
                     {...field}
                   />

@@ -1,8 +1,6 @@
-import Image from "next/image";
-
 import DataTable from "@/components/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
+import Header from "@/components/header";
 import {
   Accordion,
   AccordionContent,
@@ -10,12 +8,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 
-import Link from "next/link";
-
 import { columnsTable1, columnsTable2 } from "./data-table-columns";
-import { ProfileDropDown } from "./profile-dropdown";
 
 export default function Home() {
+
+  const nextClass = "Introduction Class"
+  const nextClassDateTime = new Date('2024-06-17T16:30:00.000Z').toLocaleString('en-IN');
 
   const data1: TRowData<typeof columnsTable1>[] = [
     {
@@ -80,6 +78,18 @@ export default function Home() {
     }
   ]
 
+  const topics = [
+    {
+      "topicName": "Array",
+      "data": data1
+    },
+    {
+      "topicName": "Array2",
+      "data": data1
+    }
+  ]
+
+
   const data2: TRowData<typeof columnsTable1>[] = [
     {
       "topic": "Sliding Window",
@@ -97,29 +107,34 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex justify-between mt-4 mr-24"><div className="text-4xl font-mono font-medium ml-24">DSA Cohort<span className="text-lg">By Adesh</span></div><ProfileDropDown><Image src={"/undraw_profile.svg"} alt="profile-icon" width={60} height={60} className="transition-transform hover:scale-105" /></ProfileDropDown></div>
-      <div className="p-24 font-mono font">
-        <div className="text-2xl mb-4">Next Class : <span className="text-gray-400">You will find your next class topic here...</span></div>
-        <div className="text-2xl">Join : <span className="text-gray-400">Class link will appear here...</span></div>
-        <div className="border-2 border-gray-400 my-10" />
-        <Tabs defaultValue="account">
+      <Header />
+      <div className="p-2 pt-10 md:p-24 font-mono font">
+        <div className="text-xl md:text-2xl mb-2 md:mb-4">Next Class : <span className="text-gray-800">{nextClass}</span></div>
+        <div className="text-xl md:text-2xl mb-2 md:mb-4">Date : <span className="text-gray-800">{nextClassDateTime}</span></div>
+        <div className="text-xl md:text-2xl">Join : <a href="https://meet.google.com/xxx-yyyy-zzz" className="text-blue-800 underline">xxx-yyyy-zzz</a></div>
+        <div className="border-2 border-gray-400 my-5 md:my-10" />
+        <Tabs defaultValue="practice">
           <TabsList >
-            <TabsTrigger value="account" className="text-2xl">Practice</TabsTrigger>
-            <TabsTrigger value="password" className="text-2xl">Classes</TabsTrigger>
+            <TabsTrigger value="practice" className="text-2xl">Practice</TabsTrigger>
+            <TabsTrigger value="account" className="text-2xl">Classes</TabsTrigger>
           </TabsList>
-          <TabsContent value="account">
-            <div className="border-2 border-black p-4">
-              <Accordion type="single" collapsible>
-                <AccordionItem value="item-1">
-                  <AccordionTrigger className="text-xl">Array</AccordionTrigger>
-                  <AccordionContent>
-                    <DataTable columns={columnsTable1} data={data1} />
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+          <TabsContent value="practice">
+            <div className="border-2 border-black p-2 md:p-4">
+              {topics.map(topic => {
+                return (
+                <Accordion className="mb-1 last:mb-0" key={topic.topicName} type="single" collapsible>
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger className="text-xl">{topic.topicName}</AccordionTrigger>
+                    <AccordionContent>
+                      <DataTable columns={columnsTable1} data={data1} />
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+                )
+              })}
             </div>
           </TabsContent>
-          <TabsContent value="password">
+          <TabsContent value="account">
             <div className="border-2 border-black p-4">
               <Accordion type="single" collapsible>
                 <AccordionItem value="item-1">

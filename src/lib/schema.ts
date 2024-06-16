@@ -15,5 +15,5 @@ export const users = mySchema.table("user", {
   email: text("email").notNull(),
   image: text("image"),
   password: text('pass').notNull(),
-  contact: integer('contact')
+  contact: text('contact').notNull()
 })
