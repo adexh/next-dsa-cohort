@@ -1,0 +1,1 @@
+ALTER TABLE "dsacohort"."user" ADD COLUMN "pass" text;

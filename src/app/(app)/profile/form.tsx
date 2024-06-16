@@ -1,11 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import LoadingDots from "@/components/ui/loading-dots";
-import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Github, Mail } from "lucide-react";
 
 export default function Form() {
   const [loading, setLoading] = useState(false);
@@ -16,25 +13,13 @@ export default function Form() {
       onSubmit={(e) => {
         e.preventDefault();
         setLoading(true);
-        signIn("email", {
-          redirect: false,
-          email: e.currentTarget.email.value,
-          // @ts-ignore
-        }).then(({ error }) => {
-          if (error) {
-            setLoading(false);
-            toast.error(error);
-          } else {
-            toast.success("Check your email for the Login/Sign-up link",{duration:36000});
-          }
-        });
       }}
       className="flex flex-col space-y-4 bg-gray-50 px-4 py-8 sm:px-16"
     >
       <div>
         <label
           htmlFor="email"
-          className="block text-xs text-gray-600 uppercase"
+          className="block text-md text-gray-600"
         >
           Email
         </label>
@@ -42,7 +27,7 @@ export default function Form() {
           id="email"
           name="email"
           type="email"
-          placeholder="hiphen@nexthrm.co"
+          defaultValue="hiphen@nexthrm.co"
           autoComplete="email"
           required
           className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
@@ -51,15 +36,32 @@ export default function Form() {
       <div>
         <label
           htmlFor="email"
-          className="block text-xs text-gray-600 uppercase"
+          className="block text-md text-gray-600"
         >
-          Password
+          Name
         </label>
         <input
           id="email"
           name="email"
-          type="password"
-          placeholder="***"
+          type="text"
+          defaultValue="Adesh Tamrakar"
+          autoComplete="email"
+          required
+          className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
+        />
+      </div>
+      <div>
+        <label
+          htmlFor="email"
+          className="block text-md text-gray-600"
+        >
+          Contact
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="number"
+          defaultValue='99947499123'
           autoComplete="email"
           required
           className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
@@ -76,25 +78,9 @@ export default function Form() {
         {loading ? (
           <LoadingDots color="#808080" />
         ) : (
-          <p><span className="flex justify-center items-center"><Mail className="mr-2" />Login</span></p>
+          <p><span className="flex justify-center items-center">Update</span></p>
         )}
       </button>
-      <div className="relative flex py-2 items-center">
-        <div className="flex-grow border-t border-gray-400"></div>
-        <span className="flex-shrink mx-4 text-gray-400">Or</span>
-        <div className="flex-grow border-t border-gray-400"></div>
-      </div>
-      <button onClick={(e) => {
-        e.preventDefault();
-        signIn("github")
-          // @ts-ignore
-          .then(() => {
-              router.refresh();
-              router.push('/');
-          });
-      }}
-        className="border-black bg-black text-white hover:bg-white hover:text-black flex h-10 items-center justify-center rounded-md border text-sm transition-all focus:outline-none"
-      > <span className="flex justify-center items-center"><Github className="mr-2" /> Github</span></button>
     </form>
   );
 }

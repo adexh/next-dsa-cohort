@@ -5,7 +5,8 @@ import { signIn } from "next-auth/react";
 import LoadingDots from "@/components/ui/loading-dots";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Edit } from "lucide-react";
+import { Mail } from "lucide-react";
+ 
 
 export default function Form() {
   const [loading, setLoading] = useState(false);
@@ -16,16 +17,17 @@ export default function Form() {
       onSubmit={(e) => {
         e.preventDefault();
         setLoading(true);
-        signIn("email", {
+        signIn("credentials", {
           redirect: false,
           email: e.currentTarget.email.value,
+          password: e.currentTarget.pass.value
           // @ts-ignore
         }).then(({ error }) => {
           if (error) {
             setLoading(false);
-            toast.error(error);
+            toast.error("Login Failed!");
           } else {
-            toast.success("Check your email for the Login/Sign-up link",{duration:36000});
+            router.push('/')
           }
         });
       }}
@@ -34,7 +36,7 @@ export default function Form() {
       <div>
         <label
           htmlFor="email"
-          className="block text-md text-gray-600"
+          className="block text-xs text-gray-600 uppercase"
         >
           Email
         </label>
@@ -42,7 +44,7 @@ export default function Form() {
           id="email"
           name="email"
           type="email"
-          defaultValue="hiphen@nexthrm.co"
+          placeholder="hiphen@gmail.com"
           autoComplete="email"
           required
           className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
@@ -51,33 +53,15 @@ export default function Form() {
       <div>
         <label
           htmlFor="email"
-          className="block text-md text-gray-600"
+          className="block text-xs text-gray-600 uppercase"
         >
-          Name
+          Password
         </label>
         <input
-          id="email"
-          name="email"
-          type="text"
-          defaultValue="Adesh Tamrakar"
-          autoComplete="email"
-          required
-          className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
-        />
-      </div>
-      <div>
-        <label
-          htmlFor="email"
-          className="block text-md text-gray-600"
-        >
-          Contact
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="number"
-          defaultValue='99947499123'
-          autoComplete="email"
+          id="pass"
+          name="pass"
+          type="password"
+          placeholder="*****"
           required
           className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm"
         />
@@ -85,6 +69,7 @@ export default function Form() {
 
       <button
         disabled={loading}
+        type="submit"
         className={`${loading
           ? "cursor-not-allowed border-gray-200 bg-gray-100"
           : "border-black bg-black text-white hover:bg-white hover:text-black"
@@ -93,7 +78,7 @@ export default function Form() {
         {loading ? (
           <LoadingDots color="#808080" />
         ) : (
-          <p><span className="flex justify-center items-center">Update</span></p>
+          <p><span className="flex justify-center items-center"><Mail className="mr-2" />Login</span></p>
         )}
       </button>
     </form>

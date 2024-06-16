@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Form from "@/app/profile/form";
+import Form from "@/app/(app)/profile/form";
 import Link from "next/link";
 
 export default function Login() {
