@@ -26,7 +26,7 @@ export default async function Home() {
 
   const nextClass = classData.topic;
 
-  const nextClassDateTime = classData.time ? new Date(classData.time).toLocaleString('en-IN') : "To be updaed!"
+  const nextClassDateTime = classData.time ? new Date(classData.time).toLocaleString('en-IN') : "To be updated!"
 
   return (
     <>
