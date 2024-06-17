@@ -13,39 +13,29 @@ import {
 
 import { Checkbox } from "@/components/ui/checkbox"
 
-const DataTable = (porps : { columns : TColumns, data : TRowData<TColumns>[] }) => {
-  // const [data, setData] = useState([]);
-
-
-  // useEffect(() => {
-  //   const fetchTableData = async () => {
-  //     const data = await fetch("/api/clients/getClients");
-  //     let result = await data.json();
-
-  //     setData(result);
-  //   }
-  //   fetchTableData();
-  // }, [])
-
-  return <>
+const DataTable = ({ columns, data } :{columns:TColumns, data : TProblem[] | TClass[]}) => {
+  
+  console.log(JSON.stringify(data,null,2));
+  
+  return (
     <div className="p-6">
       <Table>
         <TableHeader>
           <TableRow>
-            {porps.columns.map((col, index) => (
+            {columns.map((col, index) => (
               <TableHead key={col.key} className={clsx( (col.key =='problem' || col.key == 'topic') ? 'w-[60%]' : 'text-center')} ><div>{col.label}</div></TableHead>
             ))}
           </TableRow>
         </TableHeader>
         <TableBody className=" ">
-          {porps.data.map((row: any) => (
+          {data.map((row: any) => (
             <TableRow key={row.id} className="odd:bg-gray-100">
-              {porps.columns.map(col => {
+              {columns.map(col => {
                 const value = row[col.key];
                 if (value === null) {
-                  return <>
+                  return (
                     <TableCell key={value}>-</TableCell>
-                  </>
+                  )
                 } else if( col.key == 'level' ) {
                   return (
                   <TableCell key={value+col.key} className="text-center">
@@ -57,19 +47,23 @@ const DataTable = (porps : { columns : TColumns, data : TRowData<TColumns>[] }) 
                   let icon = col.key == 'link' ? 'leetcode.svg' : 'youtube.svg';
                   return (
                     <TableCell key={value} >
-                      <Link rel="stylesheet" href={value?.toString()} className="flex justify-center">
-                        <Image src={icon} alt="leetocde_icon" height={30} width={30}/>
-                      </Link>
+                      <a rel="stylesheet" href={value?.toString()} target="_blank" className="flex justify-center">
+                        <Image src={icon} alt="icon" height={30} width={30}/>
+                      </a>
                     </TableCell>
                   )
                 } else if ( col.key == 'status' ) {
                   return (
                     <TableCell key={col.key+value} className="text-center"><Checkbox checked={value} /></TableCell>
                   )
+                } else if ( col.key == 'date' ) {
+                  return (
+                    <TableCell key={value}>{value ? new Date(value).toLocaleString('en-IN') : "To be updated!"}</TableCell>
+                    )
                 } else {
-                  return <>
+                  return (
                   <TableCell key={value}>{value?.toString()}</TableCell>
-                </>
+                  )
                 }
               })}
             </TableRow>
@@ -77,7 +71,7 @@ const DataTable = (porps : { columns : TColumns, data : TRowData<TColumns>[] }) 
         </TableBody>
       </Table>
     </div>
-  </>
+  )
 }
 
 export default DataTable;

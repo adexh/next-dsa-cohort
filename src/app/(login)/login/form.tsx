@@ -6,6 +6,7 @@ import LoadingDots from "@/components/ui/loading-dots";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Mail } from "lucide-react";
+import Link from "next/link";
  
 
 export default function Form() {
@@ -81,6 +82,7 @@ export default function Form() {
           <p><span className="flex justify-center items-center"><Mail className="mr-2" />Login</span></p>
         )}
       </button>
+      <div>Don&apos;t have an account. Register <Link href='/signup' className="underline underline-offset-1">here</Link></div>
     </form>
   );
 }

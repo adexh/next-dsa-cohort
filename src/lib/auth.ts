@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcryptjs from "bcryptjs";
 import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,9 +15,9 @@ export const authOptions: NextAuthOptions = {
       },
       //@ts-ignore
       async authorize(credentials) {
-        if( !credentials?.password ) return null;
+        if( !credentials?.password || !credentials?.email ) return null;
         try {
-          const response = await db.select({id: users.id, name: users.name, pass: users.password, email: users.email}).from(users);
+          const response = await db.select({id: users.id, name: users.name, pass: users.password, email: users.email}).from(users).where(eq(users.email, credentials.email));
           if(response.length > 0) {
             const hash = response[0].pass;
             if( bcryptjs.compareSync(credentials?.password, hash) ) {

@@ -3,6 +3,7 @@ import Form from "@/app/(app)/profile/form";
 import PasswordUpdateForm from "./password-form";
 import Header from "@/components/header";
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [ loading, setLoading ] = useState(true);
@@ -16,9 +17,13 @@ export default function Login() {
     const fetchProfileData = async () => {
       setLoading(true);
       const data = await fetch('/api/user/getUserProfile')
-      const profileData : UserProfile = await data.json();
-      setUserProfile(profileData)
-      setLoading(false);
+      if( !data.ok ) {
+        toast.error('Please logout signin again!');
+      } else {
+        const profileData : UserProfile = await data.json();
+        setUserProfile(profileData)
+        setLoading(false);
+      }
     }
     fetchProfileData();
   },[])

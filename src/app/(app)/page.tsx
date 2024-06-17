@@ -9,101 +9,24 @@ import {
 } from "@/components/ui/accordion"
 
 import { columnsTable1, columnsTable2 } from "./data-table-columns";
+import { db } from "@/lib/db";
+import { jsonData } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
-export default function Home() {
+export default async function Home() {
 
-  const nextClass = "Introduction Class"
-  const nextClassDateTime = new Date('2024-06-17T16:30:00.000Z').toLocaleString('en-IN');
+  const result = await db.select().from(jsonData).orderBy(jsonData.id);
 
-  const data1: TRowData<typeof columnsTable1>[] = [
-    {
-      "problem": "Two Sum",
-      "link": "https://www.https://www.leetcode.com",
-      "level": "easy",
-      "status": true
-    },
-    {
-      "problem": "Reverse Linked List",
-      "link": "https://www.leetcode.com",
-      "level": "easy",
-      "status": false
-    },
-    {
-      "problem": "Merge Sorted Array",
-      "link": "https://www.leetcode.com",
-      "level": "easy",
-      "status": false
-    },
-    {
-      "problem": "Valid Parentheses",
-      "link": "https://www.leetcode.com",
-      "level": "easy",
-      "status": false
-    },
-    {
-      "problem": "Maximum Subarray",
-      "link": "https://www.leetcode.com",
-      "level": "medium",
-      "status": false
-    },
-    {
-      "problem": "Climbing Stairs",
-      "link": "https://www.leetcode.com",
-      "level": "medium",
-      "status": true
-    },
-    {
-      "problem": "Remove Duplicates from Sorted Array",
-      "link": "https://www.leetcode.com",
-      "level": "medium",
-      "status": true
-    },
-    {
-      "problem": "Best Time to Buy and Sell Stock",
-      "link": "https://www.leetcode.com",
-      "level": "hard",
-      "status": false
-    },
-    {
-      "problem": "Intersection of Two Linked Lists",
-      "link": "https://www.leetcode.com",
-      "level": "hard",
-      "status": false
-    },
-    {
-      "problem": "Binary Tree Inorder Traversal",
-      "link": "https://www.leetcode.com",
-      "level": "hard",
-      "status": false
-    }
-  ]
+  //@ts-ignore
+  const problemsData:TTopic[] = result[0].data;
+  //@ts-ignore
+  const classData:{topic:string, time:string} = result[1].data;
+  //@ts-ignore
+  const classesData:TTopicClass[] = result[2].data;
 
-  const topics = [
-    {
-      "topicName": "Array",
-      "data": data1
-    },
-    {
-      "topicName": "Array2",
-      "data": data1
-    }
-  ]
+  const nextClass = classData.topic;
 
-
-  const data2: TRowData<typeof columnsTable1>[] = [
-    {
-      "topic": "Sliding Window",
-      "ytlink": "https://www.https://www.leetcode.com",
-      "date": new Date().toDateString(),
-      "status": true
-    },
-    {
-      "topic": "Sliding Window",
-      "ytlink": "https://www.https://www.leetcode.com",
-      "date": new Date().toDateString(),
-      "status": false
-    },
-  ]
+  const nextClassDateTime = classData.time ? new Date(classData.time).toLocaleString('en-IN') : "To be updaed!"
 
   return (
     <>
@@ -120,13 +43,13 @@ export default function Home() {
           </TabsList>
           <TabsContent value="practice">
             <div className="border-2 border-black p-2 md:p-4">
-              {topics.map(topic => {
+              {problemsData?.map(topic => {
                 return (
-                <Accordion className="mb-1 last:mb-0" key={topic.topicName} type="single" collapsible>
+                <Accordion className="mb-1 last:mb-0" key={topic.id} type="single" collapsible>
                   <AccordionItem value="item-1">
-                    <AccordionTrigger className="text-xl">{topic.topicName}</AccordionTrigger>
+                    <AccordionTrigger className="text-xl">{topic.name}</AccordionTrigger>
                     <AccordionContent>
-                      <DataTable columns={columnsTable1} data={data1} />
+                      <DataTable columns={columnsTable1} data={topic.problems} />
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -136,14 +59,18 @@ export default function Home() {
           </TabsContent>
           <TabsContent value="account">
             <div className="border-2 border-black p-4">
-              <Accordion type="single" collapsible>
-                <AccordionItem value="item-1">
-                  <AccordionTrigger className="text-xl">Array</AccordionTrigger>
-                  <AccordionContent>
-                    <DataTable columns={columnsTable2} data={data2} />
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+            {classesData?.map(topic => {
+                return (
+                <Accordion className="mb-1 last:mb-0" key={topic.id} type="single" collapsible>
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger className="text-xl">{topic.name}</AccordionTrigger>
+                    <AccordionContent>
+                      <DataTable columns={columnsTable2} data={topic.classes} />
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+                )
+              })}
             </div>
           </TabsContent>
         </Tabs>
