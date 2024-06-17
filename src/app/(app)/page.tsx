@@ -20,13 +20,15 @@ export default async function Home() {
   //@ts-ignore
   const problemsData:TTopic[] = result[0].data;
   //@ts-ignore
-  const classData:{topic:string, time:string} = result[1].data;
+  const classData:{topic:string, time:string, meetLink:string, meetId: string} = result[1].data;
   //@ts-ignore
   const classesData:TTopicClass[] = result[2].data;
 
   const nextClass = classData.topic;
 
   const nextClassDateTime = classData.time ? new Date(classData.time).toLocaleString('en-IN') : "To be updated!"
+  const nextClassMeetLink = classData.meetLink ? classData.meetLink : 'https://meet.google.com/xxx-yyyy-zzz'
+  const nextClassMeetId = classData.meetId ? classData.meetId : 'To be updated!'
 
   return (
     <>
@@ -34,7 +36,7 @@ export default async function Home() {
       <div className="p-2 pt-10 md:p-24 font-mono font">
         <div className="text-xl md:text-2xl mb-2 md:mb-4">Next Class : <span className="text-gray-800">{nextClass}</span></div>
         <div className="text-xl md:text-2xl mb-2 md:mb-4">Date : <span className="text-gray-800">{nextClassDateTime}</span></div>
-        <div className="text-xl md:text-2xl">Join : <a href="https://meet.google.com/xxx-yyyy-zzz" className="text-blue-800 underline">xxx-yyyy-zzz</a></div>
+        <div className="text-xl md:text-2xl">Join : <a href={nextClassMeetLink} target="_blank" className="text-blue-800 underline">{nextClassMeetId}</a></div>
         <div className="border-2 border-gray-400 my-5 md:my-10" />
         <Tabs defaultValue="practice">
           <TabsList >
