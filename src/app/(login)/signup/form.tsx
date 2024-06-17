@@ -62,7 +62,6 @@ export default function ProfileUpdateForm() {
       body: JSON.stringify(values)
     })
       .then(res => {
-        setLoading(false);
         if (res.ok) {
           signIn("credentials", {
             redirect: false,
@@ -74,11 +73,13 @@ export default function ProfileUpdateForm() {
               setLoading(false);
               toast.error("Account created Login Failed!");
             } else {
+              toast.success("Account created! Redirecting");
               router.push('/')
             }
           });
         } else {
           res.json().then(json => {
+            setLoading(false);
             toast.error(json.message);
           })
         }
